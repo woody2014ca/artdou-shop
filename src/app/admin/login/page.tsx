@@ -22,12 +22,16 @@ export default function AdminLoginPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const msg =
-          typeof data?.error === "string"
-            ? data.error
-            : res.status === 401
-              ? "密码错误（若一直显示 Unauthorized，请到 Vercel 项目 Settings 检查是否开启了 Password Protection，需关闭）"
-              : "登录失败";
+        let msg: string;
+        if (typeof data?.error === "string") {
+          msg = data.error;
+          if (res.status === 401 && data?.error === "Unauthorized" && !data?.source) {
+            msg =
+              "当前 401 来自旧部署或 Vercel 保护。请到 Vercel → artdou-shop → Settings → Deployment Protection / Password Protection 关闭；并在 Deployments 里对最新部署点 Redeploy，勾选 Clear build cache。";
+          }
+        } else {
+          msg = res.status === 401 ? "密码错误" : "登录失败";
+        }
         setError(msg);
         return;
       }

@@ -26,7 +26,10 @@ export async function POST(req: NextRequest) {
   const secretTrimmed = secret.trim();
   if (password !== secretTrimmed) {
     return NextResponse.json(
-      { error: "密码错误：请确认与 Vercel 里 ADMIN_SECRET 完全一致（无空格、区分大小写）" },
+      {
+        error: "密码错误：请确认与 Vercel 里 ADMIN_SECRET 完全一致（无空格、区分大小写）",
+        source: "artdou-login",
+      },
       { status: 401 }
     );
   }
