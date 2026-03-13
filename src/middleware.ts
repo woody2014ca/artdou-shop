@@ -39,7 +39,8 @@ export async function middleware(req: NextRequest) {
   }
 
   if (path.startsWith("/api/admin")) {
-    if (path === "/api/admin/login") {
+    const apiPath = path.replace(/\/$/, "");
+    if (apiPath === "/api/admin/login") {
       return NextResponse.next();
     }
     const cookie = req.cookies.get(ADMIN_COOKIE)?.value;

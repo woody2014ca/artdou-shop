@@ -18,16 +18,18 @@ export default function AdminLoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
+        credentials: "same-origin",
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error ?? "登录失败");
+        const msg = data?.error ?? (res.status === 401 ? "密码错误" : "登录失败");
+        setError(msg);
         return;
       }
       router.push("/admin");
       router.refresh();
     } catch {
-      setError("网络错误");
+      setError("网络错误，请稍后重试");
     } finally {
       setLoading(false);
     }
