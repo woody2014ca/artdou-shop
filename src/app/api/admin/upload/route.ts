@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 const PRODUCTS_DIR = path.join(process.cwd(), "public", "products");
 const HERO_PATH = path.join(process.cwd(), "public", "hero.jpg");
@@ -12,6 +13,9 @@ function safeFilename(name: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  if (!isAdminAuthenticated(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
   const type = (formData.get("type") as string) || "product";

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, writeFile, mkdir } from "fs/promises";
+import { readFile, writeFile } from "fs/promises";
 import path from "path";
 import type { Product } from "@/types/product";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 const getProductsPath = () =>
   path.join(process.cwd(), "src", "data", "products.json");
@@ -12,7 +13,10 @@ async function loadProducts(): Promise<Product[]> {
   return Array.isArray(data) ? data : [];
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!isAdminAuthenticated(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const products = await loadProducts();
     return NextResponse.json(products);
@@ -22,6 +26,9 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!isAdminAuthenticated(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const body = await req.json().catch(() => ({}));
   const { name, price, description, image, tag } = body as Partial<Product>;
 

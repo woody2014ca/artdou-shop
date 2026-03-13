@@ -17,6 +17,7 @@ export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const token = await getAdminToken();
 
+  // 只保护 /admin 页面路由，不拦截 /api/*（API 在各自 route 里校验）
   if (path === "/admin/login") {
     const cookie = req.cookies.get(ADMIN_COOKIE)?.value;
     if (token && cookie === token) {
@@ -38,21 +39,9 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (path.startsWith("/api/admin")) {
-    const apiPath = path.replace(/\/$/, "");
-    if (apiPath === "/api/admin/login") {
-      return NextResponse.next();
-    }
-    const cookie = req.cookies.get(ADMIN_COOKIE)?.value;
-    if (!token || cookie !== token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    return NextResponse.next();
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/", "/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/admin", "/admin/", "/admin/:path*"],
 };
