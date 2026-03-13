@@ -39,6 +39,9 @@ export async function middleware(req: NextRequest) {
   }
 
   if (path.startsWith("/api/admin")) {
+    if (path === "/api/admin/login") {
+      return NextResponse.next();
+    }
     const cookie = req.cookies.get(ADMIN_COOKIE)?.value;
     if (!token || cookie !== token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
