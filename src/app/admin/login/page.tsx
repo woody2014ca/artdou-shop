@@ -22,7 +22,12 @@ export default function AdminLoginPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const msg = data?.error ?? (res.status === 401 ? "密码错误" : "登录失败");
+        const msg =
+          typeof data?.error === "string"
+            ? data.error
+            : res.status === 401
+              ? "密码错误（若一直显示 Unauthorized，请到 Vercel 项目 Settings 检查是否开启了 Password Protection，需关闭）"
+              : "登录失败";
         setError(msg);
         return;
       }

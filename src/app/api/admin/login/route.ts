@@ -11,18 +11,24 @@ function getAdminToken(): string | null {
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
-  const password = (body as { password?: string }).password;
+  const rawPassword = (body as { password?: string }).password;
+  const password = typeof rawPassword === "string" ? rawPassword.trim() : "";
 
+  const secret = process.env.ADMIN_SECRET;
   const token = getAdminToken();
-  if (!token) {
+  if (!token || !secret) {
     return NextResponse.json(
       { error: "后台未配置：请在 Vercel 项目 Settings → Environment Variables 中添加 ADMIN_SECRET" },
       { status: 503 }
     );
   }
 
-  if (password !== process.env.ADMIN_SECRET) {
-    return NextResponse.json({ error: "密码错误，请检查是否与 Vercel 环境变量 ADMIN_SECRET 一致" }, { status: 401 });
+  const secretTrimmed = secret.trim();
+  if (password !== secretTrimmed) {
+    return NextResponse.json(
+      { error: "密码错误：请确认与 Vercel 里 ADMIN_SECRET 完全一致（无空格、区分大小写）" },
+      { status: 401 }
+    );
   }
 
   const res = NextResponse.json({ ok: true });
