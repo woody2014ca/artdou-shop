@@ -19,7 +19,13 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
   const { items } = body as {
-    items: { id: string; name: string; price: number; quantity: number }[];
+    items: {
+      id: string;
+      name: string;
+      price: number;
+      quantity: number;
+      designId?: string;
+    }[];
   };
 
   if (!items || !Array.isArray(items) || items.length === 0) {
@@ -28,6 +34,17 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+
+  const designMap: { productId: string; designId: string; quantity: number }[] =
+    [];
+  items.forEach((item, index) => {
+    if (item.designId)
+      designMap.push({
+        productId: item.id,
+        designId: item.designId,
+        quantity: item.quantity,
+      });
+  });
 
   try {
     const origin = req.headers.get("origin") ?? undefined;
@@ -39,7 +56,7 @@ export async function POST(req: NextRequest) {
         price_data: {
           currency: "usd",
           product_data: {
-            name: item.name,
+            name: item.name + (item.designId ? " (自定义)" : ""),
           },
           unit_amount: Math.round(item.price * 100),
         },
@@ -47,6 +64,10 @@ export async function POST(req: NextRequest) {
       })),
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/cancel`,
+      metadata:
+        designMap.length > 0
+          ? { cart_designs: JSON.stringify(designMap) }
+          : undefined,
     });
 
     return NextResponse.json({ id: session.id, url: session.url });

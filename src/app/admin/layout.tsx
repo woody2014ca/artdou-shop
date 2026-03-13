@@ -7,6 +7,7 @@ const nav = [
   { href: "/admin", label: "首页" },
   { href: "/admin/products", label: "商品管理" },
   { href: "/admin/hero", label: "主图设置" },
+  { href: "/admin/designs", label: "设计记录" },
   { href: "/admin/orders", label: "订单管理" },
 ];
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 type OrderItem = { name: string; quantity: number; amount: number };
+type OrderDesign = { productId: string; designId: string; quantity: number };
 type Order = {
   id: string;
   created: string;
@@ -11,6 +12,7 @@ type Order = {
   currency: string;
   customer_email: string | null;
   items: OrderItem[];
+  designs?: OrderDesign[];
 };
 
 export default function AdminOrdersPage() {
@@ -56,15 +58,16 @@ export default function AdminOrdersPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-[#e1dcd5] bg-[#f8f5f1]">
-                  <th className="px-4 py-3 font-medium text-[#4c4648]">订单号</th>
-                  <th className="px-4 py-3 font-medium text-[#4c4648]">时间</th>
-                  <th className="px-4 py-3 font-medium text-[#4c4648]">金额</th>
-                  <th className="px-4 py-3 font-medium text-[#4c4648]">邮箱</th>
-                  <th className="px-4 py-3 font-medium text-[#4c4648]">商品</th>
-                </tr>
-              </thead>
+                <thead>
+                  <tr className="border-b border-[#e1dcd5] bg-[#f8f5f1]">
+                    <th className="px-4 py-3 font-medium text-[#4c4648]">订单号</th>
+                    <th className="px-4 py-3 font-medium text-[#4c4648]">时间</th>
+                    <th className="px-4 py-3 font-medium text-[#4c4648]">金额</th>
+                    <th className="px-4 py-3 font-medium text-[#4c4648]">邮箱</th>
+                    <th className="px-4 py-3 font-medium text-[#4c4648]">商品</th>
+                    <th className="px-4 py-3 font-medium text-[#4c4648]">设计</th>
+                  </tr>
+                </thead>
               <tbody>
                 {[...orders].reverse().map((order) => (
                   <tr
@@ -83,12 +86,19 @@ export default function AdminOrdersPage() {
                     <td className="px-4 py-3 text-[#847d78]">
                       {order.customer_email ?? "—"}
                     </td>
-                    <td className="px-4 py-3 text-[#847d78]">
-                      {order.items
-                        .map((i) => `${i.name} × ${i.quantity}`)
-                        .join(", ")}
-                    </td>
-                  </tr>
+                      <td className="px-4 py-3 text-[#847d78]">
+                        {order.items
+                          .map((i) => `${i.name} × ${i.quantity}`)
+                          .join(", ")}
+                      </td>
+                      <td className="px-4 py-3 text-[#847d78]">
+                        {order.designs?.length
+                          ? order.designs
+                              .map((d) => `${d.productId}: ${d.designId}`)
+                              .join("; ") || "—"
+                          : "—"}
+                      </td>
+                    </tr>
                 ))}
               </tbody>
             </table>

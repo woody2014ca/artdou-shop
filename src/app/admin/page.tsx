@@ -29,6 +29,16 @@ export default function AdminDashboardPage() {
           </p>
         </Link>
         <Link
+          href="/admin/designs"
+          className="rounded-2xl border border-[#e1dcd5] bg-white p-6 shadow-sm transition hover:border-[#d4ccc3] hover:shadow-md"
+        >
+          <span className="text-2xl">🎨</span>
+          <h2 className="mt-2 font-medium text-[#4c4648]">设计记录</h2>
+          <p className="mt-1 text-xs text-[#847d78]">
+            客户生成过的所有设计图（无论是否下单）
+          </p>
+        </Link>
+        <Link
           href="/admin/orders"
           className="rounded-2xl border border-[#e1dcd5] bg-white p-6 shadow-sm transition hover:border-[#d4ccc3] hover:shadow-md"
         >

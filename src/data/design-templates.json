@@ -1,0 +1,16 @@
+[
+  {
+    "id": "tee-blank",
+    "name": "T恤",
+    "productId": "tee-classic",
+    "templateImage": "/designs/templates/tee-blank.jpg",
+    "printArea": { "left": 0.22, "top": 0.28, "width": 0.56, "height": 0.32 }
+  },
+  {
+    "id": "bag-blank",
+    "name": "布袋",
+    "productId": "tote-bag",
+    "templateImage": "/designs/templates/bag-blank.jpg",
+    "printArea": { "left": 0.15, "top": 0.2, "width": 0.7, "height": 0.5 }
+  }
+]

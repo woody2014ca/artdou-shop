@@ -11,6 +11,7 @@ const CART_STORAGE_KEY = "artdou-cart";
 type CartItem = {
   product: Product;
   quantity: number;
+  designId?: string;
 };
 
 const products: Product[] = productsData as Product[];
@@ -20,14 +21,19 @@ function loadCartFromStorage(): CartItem[] {
   try {
     const raw = localStorage.getItem(CART_STORAGE_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as { id: string; quantity: number }[];
+    const parsed = JSON.parse(raw) as {
+      id: string;
+      quantity: number;
+      designId?: string;
+    }[];
     if (!Array.isArray(parsed)) return [];
-    return parsed
-      .map(({ id, quantity }) => {
-        const product = products.find((p) => p.id === id);
-        return product && quantity > 0 ? { product, quantity } : null;
-      })
-      .filter((x): x is CartItem => x != null);
+    const items: CartItem[] = [];
+    for (const { id, quantity, designId } of parsed) {
+      const product = products.find((p) => p.id === id);
+      if (product && quantity > 0)
+        items.push({ product, quantity, ...(designId ? { designId } : {}) });
+    }
+    return items;
   } catch {
     return [];
   }
@@ -49,6 +55,7 @@ export default function Home() {
     const payload = cart.map((item) => ({
       id: item.product.id,
       quantity: item.quantity,
+      ...(item.designId ? { designId: item.designId } : {}),
     }));
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(payload));
   }, [cart]);
@@ -64,14 +71,17 @@ export default function Home() {
     [cart]
   );
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: Product, designId?: string) => {
     setCart((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
+      const existing = prev.find(
+        (item) =>
+          item.product.id === product.id && (item.designId ?? "") === (designId ?? "")
+      );
       if (!existing) {
-        return [...prev, { product, quantity: 1 }];
+        return [...prev, { product, quantity: 1, ...(designId ? { designId } : {}) }];
       }
       return prev.map((item) =>
-        item.product.id === product.id
+        item.product.id === product.id && (item.designId ?? "") === (designId ?? "")
           ? { ...item, quantity: item.quantity + 1 }
           : item
       );
@@ -83,11 +93,16 @@ export default function Home() {
     }, 1800);
   };
 
-  const handleUpdateQuantity = (productId: string, delta: number) => {
+  const handleUpdateQuantity = (
+    productId: string,
+    delta: number,
+    designId?: string
+  ) => {
     setCart((prev) =>
       prev
         .map((item) =>
-          item.product.id === productId
+          item.product.id === productId &&
+          (item.designId ?? "") === (designId ?? "")
             ? { ...item, quantity: item.quantity + delta }
             : item
         )
@@ -103,6 +118,7 @@ export default function Home() {
       name: item.product.name,
       price: item.product.price,
       quantity: item.quantity,
+      ...(item.designId ? { designId: item.designId } : {}),
     }));
 
     try {
@@ -170,6 +186,12 @@ export default function Home() {
             >
               {lang === "zh" ? "联系我们" : "Contact"}
             </Link>
+            <Link
+              href="/custom"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-[#4c4648] hover:bg-[#f4efea] hover:text-[#2d2a28]"
+            >
+              {lang === "zh" ? "AI 区" : "Custom"}
+            </Link>
             <button
               type="button"
               onClick={() => setIsCartOpen((open) => !open)}
@@ -211,12 +233,17 @@ export default function Home() {
                 ) : (
                   cart.map((item) => (
                     <div
-                      key={item.product.id}
+                      key={`${item.product.id}-${item.designId ?? ""}`}
                       className="flex items-center justify-between gap-3 rounded-2xl border border-[#e1dcd5] bg-[#f4efea] px-3 py-3"
                     >
                       <div className="flex flex-col">
                         <span className="text-sm font-medium text-[#4c4648]">
                           {item.product.name}
+                          {item.designId && (
+                            <span className="ml-1 text-xs text-[#8a9ba8]">
+                              {lang === "zh" ? "· 自定义" : "· custom"}
+                            </span>
+                          )}
                         </span>
                         <span className="text-xs text-[#9a918d]">
                           ${item.product.price} × {item.quantity}
@@ -226,7 +253,11 @@ export default function Home() {
                         <button
                           type="button"
                           onClick={() =>
-                            handleUpdateQuantity(item.product.id, -1)
+                            handleUpdateQuantity(
+                              item.product.id,
+                              -1,
+                              item.designId
+                            )
                           }
                           className="flex h-7 w-7 items-center justify-center rounded-full border border-[#d3cbc2] text-sm text-[#5a5450] hover:bg-[#efe7de]"
                         >
@@ -238,7 +269,11 @@ export default function Home() {
                         <button
                           type="button"
                           onClick={() =>
-                            handleUpdateQuantity(item.product.id, 1)
+                            handleUpdateQuantity(
+                              item.product.id,
+                              1,
+                              item.designId
+                            )
                           }
                           className="flex h-7 w-7 items-center justify-center rounded-full border border-[#8a9ba8] bg-[#8a9ba8] text-sm text-white hover:bg-[#7c8c99]"
                         >

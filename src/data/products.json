@@ -21,5 +21,12 @@
     "price": 68,
     "description": "加州早晚温差适用的轻薄帽衫，内外皆可叠穿。",
     "image": "/products/hoodie-light.jpg"
+  },
+  {
+    "id": "tote-bag",
+    "name": "ArtDoU Tote Bag",
+    "price": 28,
+    "description": "帆布环保袋，可印制您的专属图案。",
+    "image": "/products/tote-bag.jpg"
   }
 ]

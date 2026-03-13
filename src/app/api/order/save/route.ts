@@ -50,6 +50,14 @@ export async function POST(req: NextRequest) {
     }
 
     const lineItems = session.line_items?.data ?? [];
+    let designs: { productId: string; designId: string; quantity: number }[] = [];
+    try {
+      const raw = session.metadata?.cart_designs;
+      if (typeof raw === "string") designs = JSON.parse(raw);
+    } catch {
+      // ignore
+    }
+
     const order = {
       id: session.id,
       created: new Date().toISOString(),
@@ -62,6 +70,7 @@ export async function POST(req: NextRequest) {
         quantity: li.quantity ?? 0,
         amount: li.amount_total ?? 0,
       })),
+      designs,
     };
 
     // 本地/自建服务器可写入 data/orders.json；Vercel 为只读，此处会跳过写入
