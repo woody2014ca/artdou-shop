@@ -1,0 +1,25 @@
+[
+  {
+    "id": "tee-classic",
+    "name": "ArtDoU Classic Tee",
+    "price": 38,
+    "description": "柔软舒适的中性版 T 恤，适合日常穿着与艺术展览。",
+    "image": "/products/tee-classic.jpg",
+    "tag": "热卖"
+  },
+  {
+    "id": "tee-black",
+    "name": "Black Studio Tee",
+    "price": 42,
+    "description": "黑色极简风 T 恤，突出图案与版型细节。",
+    "image": "/products/tee-black.jpg",
+    "tag": "新品"
+  },
+  {
+    "id": "hoodie-light",
+    "name": "Lightweight Hoodie",
+    "price": 68,
+    "description": "加州早晚温差适用的轻薄帽衫，内外皆可叠穿。",
+    "image": "/products/hoodie-light.jpg"
+  }
+]

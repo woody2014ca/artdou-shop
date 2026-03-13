@@ -1,52 +1,57 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import type { Product } from "@/types/product";
+import productsData from "@/data/products.json";
+import { useLang } from "@/contexts/LangContext";
 
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  image: string;
-  tag?: string;
-};
+const CART_STORAGE_KEY = "artdou-cart";
 
 type CartItem = {
   product: Product;
   quantity: number;
 };
 
-const products: Product[] = [
-  {
-    id: "tee-classic",
-    name: "ArtDoU Classic Tee",
-    price: 38,
-    description: "柔软舒适的中性版 T 恤，适合日常穿着与艺术展览。",
-    image: "/products/tee-classic.jpg",
-    tag: "热卖",
-  },
-  {
-    id: "tee-black",
-    name: "Black Studio Tee",
-    price: 42,
-    description: "黑色极简风 T 恤，突出图案与版型细节。",
-    image: "/products/tee-black.jpg",
-    tag: "新品",
-  },
-  {
-    id: "hoodie-light",
-    name: "Lightweight Hoodie",
-    price: 68,
-    description: "加州早晚温差适用的轻薄帽衫，内外皆可叠穿。",
-    image: "/products/hoodie-light.jpg",
-  },
-];
+const products: Product[] = productsData as Product[];
+
+function loadCartFromStorage(): CartItem[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as { id: string; quantity: number }[];
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map(({ id, quantity }) => {
+        const product = products.find((p) => p.id === id);
+        return product && quantity > 0 ? { product, quantity } : null;
+      })
+      .filter((x): x is CartItem => x != null);
+  } catch {
+    return [];
+  }
+}
 
 export default function Home() {
+  const { t, lang, setLang } = useLang();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [addedMessage, setAddedMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCart(loadCartFromStorage());
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const payload = cart.map((item) => ({
+      id: item.product.id,
+      quantity: item.quantity,
+    }));
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(payload));
+  }, [cart]);
 
   const cartCount = useMemo(
     () => cart.reduce((sum, item) => sum + item.quantity, 0),
@@ -72,7 +77,7 @@ export default function Home() {
       );
     });
     setIsCartOpen(true);
-    setAddedMessage(`${product.name} added to cart.`);
+    setAddedMessage(`${product.name} ${lang === "zh" ? "已加入购物车" : "added to cart"}`);
     setTimeout(() => {
       setAddedMessage(null);
     }, 1800);
@@ -145,13 +150,32 @@ export default function Home() {
               California Studio Shop
             </span>
           </div>
-          <nav className="flex items-center gap-6">
+          <nav className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setLang(lang === "en" ? "zh" : "en")}
+              className="rounded-full border border-[#d8d0c7] bg-[#f4efea] px-3 py-1.5 text-xs font-medium text-[#5a5450] transition hover:bg-[#f9f5f0]"
+            >
+              {lang === "en" ? "中文" : "EN"}
+            </button>
+            <Link
+              href="/about"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-[#4c4648] hover:bg-[#f4efea] hover:text-[#2d2a28]"
+            >
+              {lang === "zh" ? "关于我们" : "About"}
+            </Link>
+            <Link
+              href="/contact"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-[#4c4648] hover:bg-[#f4efea] hover:text-[#2d2a28]"
+            >
+              {lang === "zh" ? "联系我们" : "Contact"}
+            </Link>
             <button
               type="button"
               onClick={() => setIsCartOpen((open) => !open)}
               className="relative inline-flex items-center gap-2 rounded-full border border-[#d8d0c7] bg-[#f4efea] px-4 py-1.5 text-sm font-medium shadow-sm transition hover:border-[#c9c0b5] hover:bg-[#f9f5f0]"
             >
-              <span>Cart / 购物车</span>
+              <span>{t("cart")}</span>
               <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-[#5c6473] px-2 text-xs font-semibold text-white">
                 {cartCount}
               </span>
@@ -164,10 +188,10 @@ export default function Home() {
               <div className="flex items-center justify-between border-b border-[#e1dcd5] px-5 py-4">
                 <div>
                   <h2 className="text-sm font-semibold text-[#4c4648]">
-                    Cart / 购物车 ({cartCount})
+                    {t("cartCount", { count: cartCount })}
                   </h2>
                   <p className="text-xs text-[#9a918d]">
-                    Review your items here and complete checkout.
+                    {t("reviewItems")}
                   </p>
                 </div>
                 <button
@@ -182,7 +206,7 @@ export default function Home() {
               <div className="max-h-80 space-y-4 overflow-y-auto px-5 py-4">
                 {cart.length === 0 ? (
                   <p className="text-sm text-[#998f88]">
-                    Your cart is empty. Start by adding a piece you love.
+                    {t("cartEmpty")}
                   </p>
                 ) : (
                   cart.map((item) => (
@@ -228,7 +252,7 @@ export default function Home() {
 
               <div className="border-t border-[#e1dcd5] px-5 py-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-[#847d78]">Subtotal / 小计</span>
+                  <span className="text-[#847d78]">{t("subtotal")}</span>
                   <span className="text-base font-semibold text-[#4c4648]">
                     ${cartTotal.toFixed(2)}
                   </span>
@@ -239,7 +263,7 @@ export default function Home() {
                   onClick={handleStartCheckout}
                   className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[#8a9ba8] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#7c8c99] disabled:cursor-not-allowed disabled:bg-[#c5c0bb]"
                 >
-                  Proceed to checkout / 前往结算
+                  {t("checkout")}
                 </button>
                 <p className="mt-2 text-[11px] leading-relaxed text-[#a7a09b]">
                   In the first version we will send you to a Stripe payment page
@@ -270,16 +294,23 @@ export default function Home() {
                 href="#collection"
                 className="inline-flex items-center justify-center rounded-full bg-[#8a9ba8] px-6 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#7c8c99]"
               >
-                Browse collection
+                {t("browseCollection")}
               </a>
               <span className="text-xs text-[#9a918d]">
-                Cart is always in the top right for quick review and checkout.
+                {lang === "zh" ? "右上角可随时查看购物车并结算。" : "Cart is in the top right for quick checkout."}
               </span>
             </div>
           </div>
 
-          <div className="relative">
-            <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#d5d7dd] via-[#c2c7d0] to-[#b0b7c4] shadow-xl" />
+          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#d5d7dd] via-[#c2c7d0] to-[#b0b7c4] shadow-xl">
+            <img
+              src="/hero.jpg"
+              alt=""
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
             <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-white/10" />
           </div>
         </section>
@@ -291,10 +322,10 @@ export default function Home() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold tracking-tight text-[#4a4446] sm:text-xl">
-                Seasonal selection
+                {t("seasonalSelection")}
               </h2>
               <p className="mt-1 text-sm text-[#998f88]">
-                A few core pieces to experience the ordering flow. We can keep expanding by series later.
+                {lang === "zh" ? "几款当季单品，后续可按系列扩展。" : "A few core pieces to experience the ordering flow."}
               </p>
             </div>
           </div>
@@ -305,8 +336,15 @@ export default function Home() {
                 key={product.id}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-[#e3ddd6] bg-[#f8f5f1] text-left shadow-sm transition hover:-translate-y-1 hover:border-[#d4ccc3] hover:shadow-md"
               >
-                <div className="relative">
-                  <div className="aspect-[4/5] w-full bg-gradient-to-br from-[#e7e2dd] to-[#d7d4d0]" />
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-br from-[#e7e2dd] to-[#d7d4d0]">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
                   {product.tag ? (
                     <span className="absolute left-3 top-3 rounded-full bg-[#8a9ba8] px-3 py-1 text-xs font-medium text-white">
                       {product.tag}
@@ -331,14 +369,14 @@ export default function Home() {
                       onClick={() => setSelectedProduct(product)}
                       className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#a7a09b] underline-offset-4 hover:underline"
                     >
-                      View details
+                      {t("viewDetails")}
                     </button>
                     <button
                       type="button"
                       onClick={() => handleAddToCart(product)}
                       className="inline-flex items-center justify-center rounded-full bg-[#8a9ba8] px-4 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-[#7c8c99]"
                     >
-                      Add to cart / 加入购物车
+                      {t("addToCart")}
                     </button>
                   </div>
                 </div>
@@ -346,6 +384,34 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        <footer className="mt-20 border-t border-[#e1dcd5] py-10">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm">
+            <Link
+              href="/about"
+              className="font-medium text-[#4c4648] hover:text-[#8a9ba8]"
+            >
+              {lang === "zh" ? "关于我们" : "About Us"}
+            </Link>
+            <span className="text-[#d8d0c7]">|</span>
+            <Link
+              href="/contact"
+              className="font-medium text-[#4c4648] hover:text-[#8a9ba8]"
+            >
+              {lang === "zh" ? "联系我们" : "Contact"}
+            </Link>
+            <span className="text-[#d8d0c7]">|</span>
+            <a
+              href="/"
+              className="font-medium text-[#4c4648] hover:text-[#8a9ba8]"
+            >
+              {lang === "zh" ? "商城首页" : "Shop"}
+            </a>
+          </div>
+          <p className="mt-4 text-center text-xs text-[#a7a09b]">
+            ArtDoU · California Studio Shop
+          </p>
+        </footer>
       </main>
 
       {/* 商品详情抽屉 */}
@@ -382,7 +448,7 @@ export default function Home() {
                 }}
                 className="inline-flex items-center justify-center rounded-full bg-[#8a9ba8] px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#7c8c99]"
               >
-                Add to cart / 加入购物车
+                {t("addToCart")}
               </button>
             </div>
           </div>
