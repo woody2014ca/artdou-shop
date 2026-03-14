@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useLang } from "@/contexts/LangContext";
 
 type PrintArea = { left: number; top: number; width: number; height: number };
@@ -13,7 +14,9 @@ type Template = {
   printArea: PrintArea;
 };
 
-export default function CustomDesignPage() {
+function CustomDesignContent() {
+  const searchParams = useSearchParams();
+  const templateId = searchParams.get("template");
   const { t, lang } = useLang();
   const [templates, setTemplates] = useState<Template[]>([]);
   const [selected, setSelected] = useState<Template | null>(null);
@@ -32,9 +35,15 @@ export default function CustomDesignPage() {
   useEffect(() => {
     fetch("/api/design-templates")
       .then((r) => r.json())
-      .then(setTemplates)
+      .then((data: Template[]) => {
+        setTemplates(data);
+        if (templateId && data.length) {
+          const found = data.find((x) => x.id === templateId);
+          if (found) setSelected(found);
+        }
+      })
       .catch(() => setTemplates([]));
-  }, []);
+  }, [templateId]);
 
   const drawPreview = useCallback(() => {
     const canvas = canvasRef.current;
@@ -289,5 +298,17 @@ export default function CustomDesignPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function CustomDesignPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-[#f5f2ef]">
+        <p className="text-sm text-[#847d78]">Loading…</p>
+      </div>
+    }>
+      <CustomDesignContent />
+    </Suspense>
   );
 }
