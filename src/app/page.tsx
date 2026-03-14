@@ -400,7 +400,7 @@ export default function Home() {
                         </span>
                       ) : null}
                     </div>
-                    <div className="flex flex-1 flex-col gap-2 px-4 py-4">
+                    <div className="flex min-h-[120px] flex-1 flex-col gap-2 px-4 py-4">
                       <div className="flex items-baseline justify-between gap-2">
                         <h3 className="text-sm font-semibold text-[#4c4648]">
                           {product.name}
@@ -434,7 +434,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* AI 区：4 张图，每行 2 个 */}
+            {/* AI 区：4 张图，每行 2 个，与当季精选同高、同结构，带加入购物车 */}
             <div>
               <h2 className="text-lg font-semibold tracking-tight text-[#4a4446] sm:text-xl">
                 {lang === "zh" ? "AI 区" : "Custom Design"}
@@ -446,10 +446,10 @@ export default function Home() {
                 {Array.from({ length: AI_ZONE_COUNT }, (_, i) => {
                   const template = designTemplates[i];
                   if (template) {
+                    const product = products.find((p) => p.id === template.productId);
                     return (
-                      <Link
+                      <div
                         key={template.id}
-                        href={`/custom?template=${template.id}`}
                         className="group flex flex-col overflow-hidden rounded-2xl border border-[#e3ddd6] bg-[#f8f5f1] text-left shadow-sm transition hover:-translate-y-1 hover:border-[#d4ccc3] hover:shadow-md"
                       >
                         <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-br from-[#e7e2dd] to-[#d7d4d0]">
@@ -468,21 +468,47 @@ export default function Home() {
                             {lang === "zh" ? "自定义" : "Custom"}
                           </span>
                         </div>
-                        <div className="flex flex-1 flex-col gap-1 px-4 py-4">
-                          <h3 className="text-sm font-semibold text-[#4c4648]">
-                            {template.name}
-                          </h3>
-                          <span className="text-xs text-[#8a9ba8]">
-                            {lang === "zh" ? "上传图案 → 预览 → 加购" : "Upload → Preview → Add to cart"}
-                          </span>
+                        <div className="flex min-h-[120px] flex-1 flex-col gap-2 px-4 py-4">
+                          <div className="flex items-baseline justify-between gap-2">
+                            <h3 className="text-sm font-semibold text-[#4c4648]">
+                              {product?.name ?? template.name}
+                            </h3>
+                            {product ? (
+                              <p className="text-sm font-medium text-[#4c4648]">
+                                ${product.price}
+                              </p>
+                            ) : null}
+                          </div>
+                          <p className="line-clamp-2 text-xs text-[#998f88]">
+                            {product?.description ?? (lang === "zh" ? "上传图案 → 预览 → 加购" : "Upload → Preview → Add to cart")}
+                          </p>
+                          <div className="mt-3 flex items-center justify-between gap-3">
+                            <Link
+                              href={`/custom?template=${template.id}`}
+                              className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#a7a09b] underline-offset-4 hover:underline"
+                            >
+                              {lang === "zh" ? "去定制" : "Customize"}
+                            </Link>
+                            {product ? (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleAddToCart(product);
+                                }}
+                                className="inline-flex items-center justify-center rounded-full bg-[#8a9ba8] px-4 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-[#7c8c99]"
+                              >
+                                {t("addToCart")}
+                              </button>
+                            ) : null}
+                          </div>
                         </div>
-                      </Link>
+                      </div>
                     );
                   }
                   return (
-                    <Link
+                    <div
                       key={`ai-placeholder-${i}`}
-                      href="/custom"
                       className="group flex flex-col overflow-hidden rounded-2xl border border-dashed border-[#d4ccc3] bg-[#f8f5f1] text-left transition hover:border-[#8a9ba8] hover:bg-[#f4efea]"
                     >
                       <div className="relative flex aspect-[4/5] w-full items-center justify-center bg-gradient-to-br from-[#e7e2dd] to-[#d7d4d0]">
@@ -490,12 +516,25 @@ export default function Home() {
                           {lang === "zh" ? "更多敬请期待" : "More coming"}
                         </span>
                       </div>
-                      <div className="flex flex-1 flex-col gap-1 px-4 py-4">
-                        <h3 className="text-sm font-semibold text-[#4c4648]">
-                          {lang === "zh" ? "更多款式" : "More styles"}
-                        </h3>
+                      <div className="flex min-h-[120px] flex-1 flex-col gap-2 px-4 py-4">
+                        <div className="flex items-baseline justify-between gap-2">
+                          <h3 className="text-sm font-semibold text-[#4c4648]">
+                            {lang === "zh" ? "更多款式" : "More styles"}
+                          </h3>
+                        </div>
+                        <p className="line-clamp-2 text-xs text-[#998f88]">
+                          {lang === "zh" ? "更多自定义款式即将上线。" : "More custom styles coming soon."}
+                        </p>
+                        <div className="mt-3 flex items-center justify-between gap-3">
+                          <Link
+                            href="/custom"
+                            className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#a7a09b] underline-offset-4 hover:underline"
+                          >
+                            {lang === "zh" ? "去定制" : "Customize"}
+                          </Link>
+                        </div>
                       </div>
-                    </Link>
+                    </div>
                   );
                 })}
               </div>
