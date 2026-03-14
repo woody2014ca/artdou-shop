@@ -383,10 +383,13 @@ export default function Home() {
                     className="group flex flex-col overflow-hidden rounded-2xl border border-[#e3ddd6] bg-[#f8f5f1] text-left shadow-sm transition hover:-translate-y-1 hover:border-[#d4ccc3] hover:shadow-md"
                   >
                     <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-br from-[#e7e2dd] to-[#d7d4d0]">
+                      <div className="absolute inset-0 flex items-center justify-center px-3 py-4 text-center text-sm font-medium text-[#847d78]">
+                        {product.name}
+                      </div>
                       <img
                         src={product.image}
                         alt={product.name}
-                        className="h-full w-full object-cover"
+                        className="relative h-full w-full object-cover"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                         }}
@@ -450,15 +453,18 @@ export default function Home() {
                         className="group flex flex-col overflow-hidden rounded-2xl border border-[#e3ddd6] bg-[#f8f5f1] text-left shadow-sm transition hover:-translate-y-1 hover:border-[#d4ccc3] hover:shadow-md"
                       >
                         <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-br from-[#e7e2dd] to-[#d7d4d0]">
+                          <div className="absolute inset-0 flex items-center justify-center px-3 py-4 text-center text-sm font-medium text-[#847d78]">
+                            {template.name}
+                          </div>
                           <img
                             src={template.templateImage}
                             alt={template.name}
-                            className="h-full w-full object-cover"
+                            className="relative h-full w-full object-cover"
                             onError={(e) => {
                               e.currentTarget.style.display = "none";
                             }}
                           />
-                          <span className="absolute left-3 top-3 rounded-full bg-[#5c6473] px-3 py-1 text-xs font-medium text-white">
+                          <span className="absolute left-3 top-3 z-10 rounded-full bg-[#5c6473] px-3 py-1 text-xs font-medium text-white">
                             {lang === "zh" ? "自定义" : "Custom"}
                           </span>
                         </div>
