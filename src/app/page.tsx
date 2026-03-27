@@ -325,8 +325,8 @@ export default function Home() {
       </header>
 
       <main className="mx-auto w-full px-4 pb-24 pt-10 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
-        <section className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-center">
-          <div className="space-y-6">
+        <section className="mx-auto grid max-w-6xl items-center gap-8 sm:gap-10 lg:grid-cols-[1fr_auto] lg:gap-12">
+          <div className="space-y-6 sm:pl-2 md:pl-4">
             <p className="inline-flex items-center rounded-full bg-[#8a9ba8] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white">
               ArtDoU · Apparel
             </p>
@@ -350,7 +350,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#d5d7dd] via-[#c2c7d0] to-[#b0b7c4] shadow-xl">
+          <div className="relative mx-auto aspect-[4/5] w-full max-w-[min(100%,300px)] overflow-hidden rounded-3xl bg-gradient-to-br from-[#d5d7dd] via-[#c2c7d0] to-[#b0b7c4] shadow-xl sm:max-w-[340px] lg:mx-0 lg:justify-self-end lg:max-w-[320px] xl:max-w-[340px]">
             <img
               src="/hero.jpg"
               alt=""
@@ -376,11 +376,11 @@ export default function Home() {
               <p className="mt-1 text-sm text-[#998f88]">
                 {lang === "zh" ? "几款当季单品，后续可按系列扩展。" : "A few core pieces to experience the ordering flow."}
               </p>
-              <div className="mt-6 grid grid-cols-2 gap-4 sm:gap-6">
+              <div className="mt-6 grid grid-cols-2 justify-items-center gap-x-6 gap-y-8 sm:gap-x-8 sm:gap-y-10 md:gap-x-10 md:gap-y-12">
                 {products.slice(0, SEASONAL_COUNT).map((product) => (
                   <div
                     key={product.id}
-                    className="group flex flex-col overflow-hidden rounded-2xl border border-[#e3ddd6] bg-[#f8f5f1] text-left shadow-sm transition hover:-translate-y-1 hover:border-[#d4ccc3] hover:shadow-md"
+                    className="group flex w-full max-w-[min(100%,270px)] flex-col overflow-hidden rounded-2xl border border-[#e3ddd6] bg-[#f8f5f1] text-left shadow-sm transition hover:-translate-y-1 hover:border-[#d4ccc3] hover:shadow-md"
                   >
                     <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-br from-[#e7e2dd] to-[#d7d4d0]">
                       <div className="absolute inset-0 flex items-center justify-center px-3 py-4 text-center text-sm font-medium text-[#847d78]">
@@ -442,7 +442,7 @@ export default function Home() {
               <p className="mt-1 text-sm text-[#998f88]">
                 {lang === "zh" ? "上传图案，预览印在 T 恤/布袋上的效果，保存后可加购。" : "Upload your art, preview on tees & bags, then add to cart."}
               </p>
-              <div className="mt-6 grid grid-cols-2 gap-4 sm:gap-6">
+              <div className="mt-6 grid grid-cols-2 justify-items-center gap-x-6 gap-y-8 sm:gap-x-8 sm:gap-y-10 md:gap-x-10 md:gap-y-12">
                 {Array.from({ length: AI_ZONE_COUNT }, (_, i) => {
                   const template = designTemplates[i];
                   if (template) {
@@ -450,7 +450,7 @@ export default function Home() {
                     return (
                       <div
                         key={template.id}
-                        className="group flex flex-col overflow-hidden rounded-2xl border border-[#e3ddd6] bg-[#f8f5f1] text-left shadow-sm transition hover:-translate-y-1 hover:border-[#d4ccc3] hover:shadow-md"
+                        className="group flex w-full max-w-[min(100%,270px)] flex-col overflow-hidden rounded-2xl border border-[#e3ddd6] bg-[#f8f5f1] text-left shadow-sm transition hover:-translate-y-1 hover:border-[#d4ccc3] hover:shadow-md"
                       >
                         <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-br from-[#e7e2dd] to-[#d7d4d0]">
                           <div className="absolute inset-0 flex items-center justify-center px-3 py-4 text-center text-sm font-medium text-[#847d78]">
@@ -509,7 +509,7 @@ export default function Home() {
                   return (
                     <div
                       key={`ai-placeholder-${i}`}
-                      className="group flex flex-col overflow-hidden rounded-2xl border border-dashed border-[#d4ccc3] bg-[#f8f5f1] text-left transition hover:border-[#8a9ba8] hover:bg-[#f4efea]"
+                      className="group flex w-full max-w-[min(100%,270px)] flex-col overflow-hidden rounded-2xl border border-dashed border-[#d4ccc3] bg-[#f8f5f1] text-left transition hover:border-[#8a9ba8] hover:bg-[#f4efea]"
                     >
                       <div className="relative flex aspect-[4/5] w-full items-center justify-center bg-gradient-to-br from-[#e7e2dd] to-[#d7d4d0]">
                         <span className="text-sm font-medium text-[#8a9ba8]">
