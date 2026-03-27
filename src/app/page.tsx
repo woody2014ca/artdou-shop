@@ -170,7 +170,7 @@ export default function Home() {
         </div>
       )}
       <header className="sticky top-0 z-20 border-b border-[#e1dcd5] bg-[#f7f4f1]/90 backdrop-blur">
-        <div className="relative mx-auto flex h-16 w-full max-w-[1536px] items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="relative mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
           <div className="flex items-baseline gap-2">
             <span className="text-lg font-semibold tracking-tight text-[#464044]">
               ArtDoU
@@ -324,7 +324,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1536px] px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full px-4 pb-24 pt-10 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
         <section className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-center">
           <div className="space-y-6">
             <p className="inline-flex items-center rounded-full bg-[#8a9ba8] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white">
