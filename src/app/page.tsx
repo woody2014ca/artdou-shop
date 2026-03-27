@@ -367,9 +367,9 @@ export default function Home() {
           id="collection"
           className="mt-16 border-t border-[#e1dcd5] pt-10 sm:mt-20 sm:pt-12"
         >
-          <div className="grid gap-12 lg:grid-cols-2">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-x-0 lg:gap-y-12">
             {/* 当季精选：4 个商品，每行 2 个 */}
-            <div>
+            <div className="lg:pr-8 xl:pr-12">
               <h2 className="text-lg font-semibold tracking-tight text-[#4a4446] sm:text-xl">
                 {t("seasonalSelection")}
               </h2>
@@ -435,7 +435,7 @@ export default function Home() {
             </div>
 
             {/* AI 区：4 张图，每行 2 个，与当季精选同高、同结构，带加入购物车 */}
-            <div>
+            <div className="border-t border-[#e1dcd5] pt-10 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0 xl:pl-14">
               <h2 className="text-lg font-semibold tracking-tight text-[#4a4446] sm:text-xl">
                 {lang === "zh" ? "AI 区" : "Custom Design"}
               </h2>
